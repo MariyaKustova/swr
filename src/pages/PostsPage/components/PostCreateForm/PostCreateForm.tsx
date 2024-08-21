@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   Button,
@@ -12,13 +12,16 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { useStore } from "../../../../store";
+import useSWR, { useSWRConfig } from "swr";
+import toast from "react-hot-toast";
 import { initialValues } from "./constants";
 import { FieldsNames } from "./types";
-import { FormValues } from "../../../../model/postsTypes";
+import { FormValues, Post } from "../../../../model/postsTypes";
+import { getRandomInt } from "../../../../utils";
+import { postsApi } from "../../../../api/postsApi";
+import { POSTS_QUERY_KEYS } from "../../constants";
 
 import s from "./PostCreateForm.module.scss";
-import { getRandomInt } from "../../../../utils";
 
 interface PostCreateFormProps {
   open: boolean;
@@ -26,11 +29,22 @@ interface PostCreateFormProps {
 }
 
 const PostCreateForm = ({ open, onClose }: PostCreateFormProps) => {
-  const { tagsList, loadTagsList, addPost, postsUserIds } = useStore();
+  const { cache, mutate } = useSWRConfig();
 
-  useEffect(() => {
-    loadTagsList();
-  }, [loadTagsList]);
+  const posts = cache.get(POSTS_QUERY_KEYS.POSTS);
+  const postsData: Post[] = posts?.data ?? [];
+
+  const postsUserIds = [...new Set(postsData?.map(({ userId }) => userId))];
+
+  const { data: tagsList, error } = useSWR(
+    POSTS_QUERY_KEYS.LOAD_TAGS,
+    postsApi.getTagsList,
+    { revalidateIfStale: false }
+  );
+
+  if (error) {
+    toast.error("Error loading...");
+  }
 
   const {
     control,
@@ -39,11 +53,32 @@ const PostCreateForm = ({ open, onClose }: PostCreateFormProps) => {
   } = useForm<FormValues>({
     defaultValues: initialValues,
   });
-  const onSubmit = (data: FormValues) => {
-    addPost({
-      ...data,
-      userId: postsUserIds[getRandomInt(postsUserIds.length - 1)],
+  const onSubmit = async (data: FormValues) => {
+    const userId = postsUserIds[getRandomInt(postsUserIds.length - 1)];
+
+    const newPost = await mutate(POSTS_QUERY_KEYS.ADD_POST, () =>
+      postsApi.createPost({
+        title: data.title,
+        userId,
+      })
+    );
+
+    cache.set(POSTS_QUERY_KEYS.POSTS, {
+      ...posts,
+      data: [
+        ...postsData,
+        {
+          ...newPost,
+          body: data.body,
+          tags: data.tags,
+          reactions: {
+            likes: 0,
+            dislikes: 0,
+          },
+        },
+      ],
     });
+
     onClose();
   };
 
@@ -88,7 +123,7 @@ const PostCreateForm = ({ open, onClose }: PostCreateFormProps) => {
                   multiple
                   error={Boolean(errors?.[FieldsNames.TAGS])}
                 >
-                  {tagsList.map(({ slug, name }) => (
+                  {tagsList?.map(({ slug, name }) => (
                     <MenuItem key={slug} value={slug}>
                       {name}
                     </MenuItem>

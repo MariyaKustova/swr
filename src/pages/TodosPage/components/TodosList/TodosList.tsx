@@ -1,38 +1,44 @@
 import React from "react";
-import { useStore } from "../../../../store";
 import { Checkbox } from "@mui/material";
-import Controls from "../../../../components/Controls";
+
+import Controls from "../../../../core/Controls";
+import { Todo } from "../../../../model/todosTypes";
 
 import s from "./TodosList.module.scss";
-
 interface TodosListProps {
+  onCheckboxChange: (id: number, completed: boolean) => void;
   onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
+  todos: Todo[];
 }
 
-const TodosList = ({ onEdit }: TodosListProps) => {
-  const { editTodo, todos, todosLoadingId, deleteTodo } = useStore();
-
+const TodosList = ({
+  onCheckboxChange,
+  onEdit,
+  onDelete,
+  todos,
+}: TodosListProps) => {
   return (
-    <div>
+    <>
       {todos.map((todo) => (
         <div key={todo.id} className={s.TodosList__listItem}>
           <div>
             <Checkbox
               checked={todo.completed}
-              onChange={() => editTodo({ ...todo, completed: !todo.completed })}
+              onChange={() => onCheckboxChange(todo.id, !todo.completed)}
             />
             <span className={todo.completed ? s.TodosList__completedTodo : ""}>
               {todo.todo}
             </span>
           </div>
           <Controls
-            isDisabled={todosLoadingId === todo.id}
+            // isDisabled={todosLoadingId === todo.id}
             onEdit={() => onEdit(todo.id)}
-            onDelete={() => deleteTodo(todo.id)}
+            onDelete={() => onDelete(todo.id)}
           />
         </div>
       ))}
-    </div>
+    </>
   );
 };
 

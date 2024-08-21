@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface TodoDialogProps {
   open: boolean;
@@ -21,13 +21,7 @@ export const TodoDialog = ({
   isEdit = false,
   onChange,
 }: TodoDialogProps) => {
-  const [todoText, setTodoText] = useState<string>("");
-
-  useEffect(() => {
-    if (value.length) {
-      setTodoText(value);
-    }
-  }, [value]);
+  const [todoText, setTodoText] = useState<string>(value);
 
   const actionName = isEdit ? "Edit" : "Create";
 
@@ -52,6 +46,7 @@ export const TodoDialog = ({
           onClick={() => {
             onChange(todoText);
             setTodoText("");
+            onClose();
           }}
         >
           {actionName}

@@ -1,25 +1,27 @@
 import { Todo, TodosResponse } from "../model/todosTypes";
+import { TODOS_QUERY_KEYS } from "../pages/TodosPage/constants";
 import { HttpClientBaseQuery } from "./HttpClient";
 
 export const todosApi = {
-  getTodos: () =>
-    HttpClientBaseQuery<TodosResponse>({ url: "/todos" }).then(
+  getTodos: (url: string) =>
+    HttpClientBaseQuery<TodosResponse>({ url }).then(
       (response) => response.data?.todos
     ),
-  getTodoById: (id: number) =>
-    HttpClientBaseQuery<Todo>({ url: `/todos/${id}` }),
-  createTodo: (todo: Omit<Todo, "id">) =>
+  createTodo: ({ todo }: { todo: Omit<Todo, "id"> }) =>
     HttpClientBaseQuery<Todo>({
-      url: "/todos/add",
+      url: TODOS_QUERY_KEYS.ADD_TODO,
       method: "POST",
       data: todo,
     }).then((response) => response.data),
-  editTodo: (todo: Todo) =>
+  editTodo: (id: number, completed: boolean) =>
     HttpClientBaseQuery<Todo>({
-      url: `/todos/${todo.id}`,
+      url: TODOS_QUERY_KEYS.EDIT_TODO.replace("edit/", String(id)),
       method: "PUT",
-      data: { completed: todo.completed },
+      data: { completed },
     }).then((response) => response.data),
   deleteTodo: (id: number) =>
-    HttpClientBaseQuery<Todo>({ url: `/todos/${id}`, method: "DELETE" }),
+    HttpClientBaseQuery<Todo>({
+      url: TODOS_QUERY_KEYS.DELETE_TODO.replace("delete/", String(id)),
+      method: "DELETE",
+    }),
 };

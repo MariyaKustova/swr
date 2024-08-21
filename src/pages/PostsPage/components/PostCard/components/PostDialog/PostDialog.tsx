@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface PostDialogProps {
   open: boolean;
@@ -19,13 +19,7 @@ export const PostDialog = ({
   value = "",
   onChange,
 }: PostDialogProps) => {
-  const [postText, setPostText] = useState<string>("");
-
-  useEffect(() => {
-    if (value.length) {
-      setPostText(value);
-    }
-  }, [value]);
+  const [postText, setPostText] = useState<string>(value);
 
   return (
     <Dialog maxWidth={"sm"} fullWidth open={open} onClose={onClose}>

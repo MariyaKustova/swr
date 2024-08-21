@@ -1,29 +1,36 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import useSWR from "swr";
+import toast from "react-hot-toast";
 
-import { useStore } from "../../../../store";
 import { RoutePath } from "../../../../model/baseTypes";
 import PostItem from "../PostItem";
-import { Loader } from "../../../../components/Loader";
+import { Loader } from "../../../../core/Loader";
+import { POSTS_QUERY_KEYS } from "../../constants";
+import { postsApi } from "../../../../api/postsApi";
 
 import s from "./PostsList.module.scss";
 
 const PostsList = () => {
-  const { postsLoadingInitial, loadPosts, posts } = useStore();
+  const {
+    data: posts,
+    error,
+    isLoading,
+  } = useSWR(POSTS_QUERY_KEYS.POSTS, postsApi.getPosts, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  });
 
-  useEffect(() => {
-    if (!posts.length) {
-      loadPosts();
-    }
-  }, [loadPosts, posts]);
-
+  if (error) {
+    toast.error("Error posts loading...");
+  }
   return (
     <>
-      {postsLoadingInitial ? (
+      {isLoading ? (
         <Loader />
       ) : (
         <div className={s.PostsList}>
-          {posts.map(({ id, title, tags, body }) => (
+          {posts?.map(({ id, title, tags, body }) => (
             <Link
               key={id}
               className={s.PostsList__link}

@@ -1,6 +1,6 @@
 {
-  "short_name": "Zustand",
-  "name": "State manager - Zustand",
+  "short_name": "SWR",
+  "name": "State manager - SWR",
   "icons": [
     {
       "src": "favicon.svg",
