@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import useSWR from "swr";
+import useSWR, { preload } from "swr";
 import toast from "react-hot-toast";
 
 import { RoutePath } from "../../../../model/baseTypes";
@@ -10,6 +10,8 @@ import { POSTS_QUERY_KEYS } from "../../constants";
 import { postsApi } from "../../../../api/postsApi";
 
 import s from "./PostsList.module.scss";
+
+preload(POSTS_QUERY_KEYS.POSTS, postsApi.getPosts);
 
 const PostsList = () => {
   const {

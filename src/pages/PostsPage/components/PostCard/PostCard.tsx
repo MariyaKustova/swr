@@ -49,10 +49,11 @@ const PostCard = () => {
   const handleDeletePost = async () => {
     const deletedPost = await deletePost();
     if (deletedPost) {
-      cache.set(POSTS_QUERY_KEYS.POSTS, {
-        ...posts,
-        data: [...postsData.filter(({ id }) => id !== deletedPost.id)],
-      });
+      mutate(
+        POSTS_QUERY_KEYS.POSTS,
+        [...postsData.filter(({ id }) => id !== deletedPost.id)],
+        { revalidate: false }
+      );
     }
     navigate(RoutePath.POSTS);
   };
@@ -67,14 +68,10 @@ const PostCard = () => {
         const index = postsData.findIndex((post) => post.id === editPost.id);
         postsData.splice(index, 1, editPost);
 
-        cache.set(POSTS_QUERY_KEYS.POSTS, {
-          ...posts,
-          data: postsData,
-        });
+        mutate(POSTS_QUERY_KEYS.POSTS, postsData, { revalidate: false });
 
-        cache.set(`${POSTS_QUERY_KEYS.POST_BY_ID}${id}`, {
-          ...posts,
-          data: editPost,
+        mutate(`${POSTS_QUERY_KEYS.POST_BY_ID}${id}`, editPost, {
+          revalidate: false,
         });
       }
     }

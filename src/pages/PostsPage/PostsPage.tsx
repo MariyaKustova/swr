@@ -13,7 +13,7 @@ const PostsPageComponent = () => {
   return (
     <>
       <PageTitle title="Posts" onClick={() => setOpenCreateForm(true)} />
-      {<PostsList />}
+      <PostsList />
       {openCreateForm && (
         <PostCreateForm
           open={openCreateForm}

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
-import useSWR, { useSWRConfig } from "swr";
+import useSWR, { preload, useSWRConfig } from "swr";
 
 import { Loader } from "../../core/Loader";
 import { TodoDialog } from "./components/TodoDialog";
@@ -9,7 +9,8 @@ import { getRandomInt } from "../../utils";
 import TodosList from "./components/TodosList";
 import { TODOS_QUERY_KEYS } from "./constants";
 import { todosApi } from "../../api/todosApi";
-import { Todo } from "../../model/todosTypes";
+
+preload(TODOS_QUERY_KEYS.LOAD_TODOS, todosApi.getTodos);
 
 const TodosPage = () => {
   const [editTodoId, setEditTodoId] = useState<number | null>(null);
@@ -18,7 +19,7 @@ const TodosPage = () => {
   const { mutate } = useSWRConfig();
 
   const {
-    data,
+    data: todos = [],
     error,
     isLoading: isTodosLoading,
   } = useSWR(TODOS_QUERY_KEYS.LOAD_TODOS, todosApi.getTodos, {
@@ -29,14 +30,6 @@ const TodosPage = () => {
   if (error) {
     toast.error("Error todos loading...");
   }
-
-  const [todos, setTodos] = useState<Todo[]>([]);
-
-  useEffect(() => {
-    if (data) {
-      setTodos(data);
-    }
-  }, [data]);
 
   const todosUserIds = todos.map(({ userId }) => userId);
   const currentTodo = todos.find((todo) => todo.id === editTodoId);
@@ -57,7 +50,9 @@ const TodosPage = () => {
         })
       ).then((newTodo) => {
         if (newTodo) {
-          setTodos([...todos, newTodo]);
+          mutate(TODOS_QUERY_KEYS.LOAD_TODOS, [...todos, newTodo], {
+            revalidate: false,
+          });
         }
       });
     }
@@ -66,13 +61,17 @@ const TodosPage = () => {
 
   const editContentTodo = (value: string) => {
     if (currentTodo && value.length && currentTodo.todo !== value) {
-      setTodos((prev) =>
-        prev.map((todo) => {
+      mutate(
+        TODOS_QUERY_KEYS.LOAD_TODOS,
+        todos.map((todo) => {
           if (todo.id === currentTodo.id) {
             return { ...todo, todo: value };
           }
           return todo;
-        })
+        }),
+        {
+          revalidate: false,
+        }
       );
     }
     onCloseEditDialog();
@@ -85,13 +84,17 @@ const TodosPage = () => {
       );
 
       if (response) {
-        setTodos((prev) =>
-          prev.map((todo) => {
+        mutate(
+          TODOS_QUERY_KEYS.LOAD_TODOS,
+          todos.map((todo) => {
             if (todo.id === response.id) {
               return { ...todo, completed: response.completed };
             }
             return todo;
-          })
+          }),
+          {
+            revalidate: false,
+          }
         );
       }
     }
@@ -103,7 +106,13 @@ const TodosPage = () => {
       todosApi.deleteTodo(id)
     ).then((response) => {
       if (response?.data) {
-        setTodos((prev) => prev.filter((todo) => todo.id !== response.data.id));
+        mutate(
+          TODOS_QUERY_KEYS.LOAD_TODOS,
+          todos.filter((todo) => todo.id !== response.data.id),
+          {
+            revalidate: false,
+          }
+        );
       }
     });
   };
@@ -111,7 +120,6 @@ const TodosPage = () => {
   return (
     <>
       <PageTitle title="Todos" onClick={() => setOpenDialog(true)} />
-
       {isTodosLoading ? (
         <Loader />
       ) : (
