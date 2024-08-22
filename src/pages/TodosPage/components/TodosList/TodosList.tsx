@@ -5,6 +5,8 @@ import Controls from "../../../../core/Controls";
 import { Todo } from "../../../../model/todosTypes";
 
 import s from "./TodosList.module.scss";
+import { useSWRConfig } from "swr";
+import { TODOS_QUERY_KEYS } from "../../constants";
 interface TodosListProps {
   onCheckboxChange: (id: number, completed: boolean) => void;
   onEdit: (id: number) => void;
@@ -18,6 +20,9 @@ const TodosList = ({
   onDelete,
   todos,
 }: TodosListProps) => {
+  const { cache } = useSWRConfig();
+  const checkDisabled = (id: number) =>
+    Boolean(cache.get(`${TODOS_QUERY_KEYS.DELETE_TODO}${id}`)?.isLoading);
   return (
     <>
       {todos.map((todo) => (
@@ -32,7 +37,7 @@ const TodosList = ({
             </span>
           </div>
           <Controls
-            // isDisabled={todosLoadingId === todo.id}
+            isDisabled={checkDisabled(todo.id)}
             onEdit={() => onEdit(todo.id)}
             onDelete={() => onDelete(todo.id)}
           />
