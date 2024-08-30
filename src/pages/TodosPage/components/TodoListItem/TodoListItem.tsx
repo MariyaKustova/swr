@@ -62,7 +62,7 @@ const TodoListItem = ({ todo, onEdit, todos }: TodoListItemProps) => {
   };
 
   return (
-    <div key={todo.id} className={s.TodosListItem}>
+    <div className={s.TodosListItem}>
       <div>
         <Checkbox checked={todo.completed} onChange={toggleCheckboxTodo} />
         <span className={todo.completed ? s.TodosListItem__completedTodo : ""}>

@@ -40,7 +40,7 @@ const TodosPage = () => {
     const userId = todosUserIds?.[getRandomInt(todosUserIds.length - 1)];
 
     if (value.length && todosUserIds?.length && userId) {
-      mutate(`${TODOS_QUERY_KEYS.ADD_TODO}${userId}`, () =>
+      mutate(`${TODOS_QUERY_KEYS.ADD_TODO}/${userId}`, () =>
         todosApi.createTodo({
           todo: {
             userId,

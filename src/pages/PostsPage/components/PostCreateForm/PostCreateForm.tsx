@@ -57,7 +57,7 @@ const PostCreateForm = ({ open, onClose }: PostCreateFormProps) => {
   const onSubmit = async (data: FormValues) => {
     const userId = postsUserIds[getRandomInt(postsUserIds.length - 1)];
 
-    const newPost = await mutate(POSTS_QUERY_KEYS.ADD_POST, () =>
+    const newPost = await mutate(`${POSTS_QUERY_KEYS.ADD_POST}/${userId}`, () =>
       postsApi.createPost({
         title: data.title,
         userId,

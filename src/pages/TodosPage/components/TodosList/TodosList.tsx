@@ -12,7 +12,12 @@ const TodosList = ({ onEdit, todos }: TodosListProps) => {
   return (
     <>
       {todos.map((todo) => (
-        <TodoListItem key={todo.id} todo={todo} todos={todos} onEdit={onEdit} />
+        <TodoListItem
+          key={`${todo.id}-${todo}`}
+          todo={todo}
+          todos={todos}
+          onEdit={onEdit}
+        />
       ))}
     </>
   );
