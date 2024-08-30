@@ -1,5 +1,5 @@
-import { Post, PostsResponse, Tag } from "../model/postsTypes";
-import { POSTS_QUERY_KEYS } from "../pages/PostsPage/constants";
+import { Post, PostsResponse, Tag } from "@model/postsTypes";
+import { POSTS_QUERY_KEYS } from "@constants";
 import { HttpClientBaseQuery } from "./HttpClient";
 
 export const postsApi = {

@@ -1,5 +1,5 @@
-import { Todo, TodosResponse } from "../model/todosTypes";
-import { TODOS_QUERY_KEYS } from "../pages/TodosPage/constants";
+import { Todo, TodosResponse } from "@model/todosTypes";
+import { TODOS_QUERY_KEYS } from "@constants";
 import { HttpClientBaseQuery } from "./HttpClient";
 
 export const todosApi = {
@@ -13,7 +13,7 @@ export const todosApi = {
       method: "POST",
       data: todo,
     }).then((response) => response.data),
-  editTodo: (id: number, completed: boolean) =>
+  editTodo: ({ id, completed }: { id: number; completed: boolean }) =>
     HttpClientBaseQuery<Todo>({
       url: TODOS_QUERY_KEYS.EDIT_TODO.replace("edit/", String(id)),
       method: "PUT",

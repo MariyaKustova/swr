@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import useSWR, { preload, useSWRConfig } from "swr";
 
-import { Loader } from "../../core/Loader";
+import { Loader } from "@core/Loader";
+import PageTitle from "@core/PageTitle";
+import { todosApi } from "@api/todosApi";
+import { TODOS_QUERY_KEYS } from "@constants";
 import { TodoDialog } from "./components/TodoDialog";
-import PageTitle from "../../core/PageTitle";
 import { getRandomInt } from "../../utils";
 import TodosList from "./components/TodosList";
-import { TODOS_QUERY_KEYS } from "./constants";
-import { todosApi } from "../../api/todosApi";
 
 preload(TODOS_QUERY_KEYS.LOAD_TODOS, todosApi.getTodos);
 
@@ -77,46 +77,6 @@ const TodosPage = () => {
     onCloseEditDialog();
   };
 
-  const toggleCheckboxTodo = async (id: number, completed: boolean) => {
-    if (todos) {
-      const response = await mutate(`${TODOS_QUERY_KEYS.EDIT_TODO}${id}`, () =>
-        todosApi.editTodo(id, completed)
-      );
-
-      if (response) {
-        mutate(
-          TODOS_QUERY_KEYS.LOAD_TODOS,
-          todos.map((todo) => {
-            if (todo.id === response.id) {
-              return { ...todo, completed: response.completed };
-            }
-            return todo;
-          }),
-          {
-            revalidate: false,
-          }
-        );
-      }
-    }
-  };
-
-  const deleteTodo = (id: number) => {
-    todos.filter((todo) => todo.id !== id);
-    mutate(`${TODOS_QUERY_KEYS.DELETE_TODO}${id}`, () =>
-      todosApi.deleteTodo(id)
-    ).then((response) => {
-      if (response?.data) {
-        mutate(
-          TODOS_QUERY_KEYS.LOAD_TODOS,
-          todos.filter((todo) => todo.id !== response.data.id),
-          {
-            revalidate: false,
-          }
-        );
-      }
-    });
-  };
-
   return (
     <>
       <PageTitle title="Todos" onClick={() => setOpenDialog(true)} />
@@ -124,14 +84,7 @@ const TodosPage = () => {
         <Loader />
       ) : (
         <>
-          {todos && (
-            <TodosList
-              onCheckboxChange={toggleCheckboxTodo}
-              onEdit={setEditTodoId}
-              todos={todos}
-              onDelete={deleteTodo}
-            />
-          )}
+          {todos && <TodosList onEdit={setEditTodoId} todos={todos} />}
           {Boolean(editTodoId) && (
             <TodoDialog
               open={Boolean(editTodoId)}

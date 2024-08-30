@@ -1,5 +1,5 @@
 import App from "./App";
-import { RoutePath } from "./model/baseTypes";
+import { RoutePath } from "@model/baseTypes";
 import PostItemPage from "./pages/PostsPage/components/PostCard";
 import PostsPage from "./pages/PostsPage";
 import TodosPage from "./pages/TodosPage";

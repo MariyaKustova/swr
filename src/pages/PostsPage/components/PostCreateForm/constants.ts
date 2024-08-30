@@ -1,4 +1,4 @@
-import { FormValues } from "../../../../model/postsTypes";
+import { FormValues } from "@model/postsTypes";
 
 export const initialValues: FormValues = {
   title: "",

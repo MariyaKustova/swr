@@ -1,4 +1,4 @@
-.TodosList__listItem {
+.TodosListItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -14,8 +14,8 @@
     border-color: #1976d2;
     box-shadow: 5px 5px 5px #1976d2;
   }
-}
 
-.TodosList__completedTodo {
-  text-decoration: line-through;
+  &__completedTodo {
+    text-decoration: line-through;
+  }
 }

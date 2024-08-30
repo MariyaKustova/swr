@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-
 import { Route, Routes } from "react-router-dom";
 import { Typography } from "@mui/material";
+
+import PageTitle from "@core/PageTitle";
 import PostCard from "./components/PostCard";
-import PageTitle from "../../core/PageTitle";
 import PostCreateForm from "./components/PostCreateForm";
 import PostsList from "./components/PostsList";
 

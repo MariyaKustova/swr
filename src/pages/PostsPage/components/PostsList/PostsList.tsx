@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import useSWR, { preload } from "swr";
 import toast from "react-hot-toast";
 
-import { RoutePath } from "../../../../model/baseTypes";
+import { RoutePath } from "@model/baseTypes";
+import { Loader } from "@core/Loader";
+import { postsApi } from "@api/postsApi";
+import { POSTS_QUERY_KEYS } from "@constants";
 import PostItem from "../PostItem";
-import { Loader } from "../../../../core/Loader";
-import { POSTS_QUERY_KEYS } from "../../constants";
-import { postsApi } from "../../../../api/postsApi";
 
 import s from "./PostsList.module.scss";
 

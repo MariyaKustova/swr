@@ -14,12 +14,13 @@ import {
 } from "@mui/material";
 import useSWR, { useSWRConfig } from "swr";
 import toast from "react-hot-toast";
+
+import { FormValues, Post } from "@model/postsTypes";
+import { postsApi } from "@api/postsApi";
+import { POSTS_QUERY_KEYS } from "@constants";
 import { initialValues } from "./constants";
 import { FieldsNames } from "./types";
-import { FormValues, Post } from "../../../../model/postsTypes";
 import { getRandomInt } from "../../../../utils";
-import { postsApi } from "../../../../api/postsApi";
-import { POSTS_QUERY_KEYS } from "../../constants";
 
 import s from "./PostCreateForm.module.scss";
 

@@ -4,17 +4,17 @@ import { IconButton, Typography } from "@mui/material";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
+import toast from "react-hot-toast";
 
-import { Loader } from "../../../../core/Loader";
-import Controls from "../../../../core/Controls";
+import { Loader } from "@core/Loader";
+import Controls from "@core/Controls";
+import { Post } from "@model/postsTypes";
+import { RoutePath } from "@model/baseTypes";
+import { postsApi } from "@api/postsApi";
+import { POSTS_QUERY_KEYS } from "@constants";
 import { PostDialog } from "./components/PostDialog";
-import { RoutePath } from "../../../../model/baseTypes";
 
 import s from "./PostCard.module.scss";
-import { postsApi } from "../../../../api/postsApi";
-import toast from "react-hot-toast";
-import { POSTS_QUERY_KEYS } from "../../constants";
-import { Post } from "../../../../model/postsTypes";
 
 const PostCard = () => {
   const { id } = useParams();
